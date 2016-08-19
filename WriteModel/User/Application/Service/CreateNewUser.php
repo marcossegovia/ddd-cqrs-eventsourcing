@@ -3,10 +3,11 @@
 namespace User\Application\Service;
 
 use Core\Application\Service\WithRecordedEvents;
+use MarcosSegovia\User\Domain\Model\User;
 use SimpleBus\Message\Message;
 use User\Domain\Repository\UserRepository;
 
-final class AddRatedDrinkToUser extends WithRecordedEvents
+final class CreateNewUser extends WithRecordedEvents
 {
     /** @var UserRepository */
     private $user_repository;
@@ -25,8 +26,7 @@ final class AddRatedDrinkToUser extends WithRecordedEvents
      */
     public function handle(Message $message)
     {
-        $user = $this->user_repository->getById($message->userId());
-        $user->addDrink($message->drinkId());
+        $user = User::create($this->user_repository->nextIdentity(), $message->name());
         $this->user_repository->add($user);
         $this->recordEvents($user);
     }
