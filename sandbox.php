@@ -4,6 +4,9 @@ declare(strict_types = 1);
 
 use SimpleBus\Message\Bus\Middleware\FinishesHandlingMessageBeforeHandlingNext;
 use SimpleBus\Message\Bus\Middleware\MessageBusSupportingMiddleware;
+use SimpleBus\Message\Handler\DelegatesToMessageHandlerMiddleware;
+use SimpleBus\Message\Handler\Map\LazyLoadingMessageHandlerMap;
+use SimpleBus\Message\Handler\Resolver\NameBasedMessageHandlerResolver;
 use SimpleBus\Message\Name\ClassBasedNameResolver;
 use SimpleBus\Message\Subscriber\Collection\LazyLoadingMessageSubscriberCollection;
 use SimpleBus\Message\Subscriber\NotifiesMessageSubscribersMiddleware;
@@ -16,7 +19,10 @@ $container = new League\Container\Container;
 /** EVENT BUS */
 
 $container->share('EventBus',
-    function() use ($container)
+    function() use
+    (
+        $container
+    )
     {
         $eventSubscribersByEventName = [
             \User\Domain\Model\UserWasCreated::class   => [
@@ -66,7 +72,58 @@ $container->share('EventBus',
 );
 /** *** */
 
+/** COMMAND BUS */
+
+$container->share('CommandBus',
+    function() use
+    (
+        $container
+    )
+    {
+        $commandHandlersByCommandName = [
+            \User\Application\Command\CreateNewUser::class       => 'user.application.service.create_new_user',
+            \User\Application\Command\AddRatedDrinkToUser::class => 'user.application.service.add_rated_drink_to_user',
+            \Store\Application\Command\CreateNewDrink::class     => 'store.application.service.create_new_drink'
+        ];
+
+        $command_bus = new MessageBusSupportingMiddleware();
+        $command_bus->appendMiddleware(new FinishesHandlingMessageBeforeHandlingNext());
+
+        $serviceLocator = function($serviceId) use
+        (
+            $container
+        )
+        {
+            $handler = $container->get($serviceId);
+
+            return $handler;
+        };
+
+        $commandHandlerMap = new LazyLoadingMessageHandlerMap(
+            $commandHandlersByCommandName,
+            $serviceLocator
+        );
+
+        $commandNameResolver = new ClassBasedNameResolver();
+
+        $commandHandlerResolver = new NameBasedMessageHandlerResolver(
+            $commandNameResolver,
+            $commandHandlerMap
+        );
+
+        $command_bus->appendMiddleware(
+            new DelegatesToMessageHandlerMiddleware(
+                $commandHandlerResolver
+            )
+        );
+
+        return $command_bus;
+    }
+);
+/** *** */
+
 /** READ MODEL DI */
+
 $container->share('ReadModel\RatingSystem\Domain\Repository\RatingRepository',
     'ReadModel\RatingSystem\Infrastructure\Repository\InMemory\Rating\RatingRepository'
 );
@@ -97,21 +154,29 @@ $container->share('Store\Domain\Repository\DrinkRepository',
 );
 
 $container->add('user.application.service.create_new_user.original', 'User\Application\Service\CreateNewUser')
-->withArgument('User\Domain\Repository\UserRepository');
+    ->withArgument('User\Domain\Repository\UserRepository');
 $container->add('user.application.service.create_new_user', 'Core\Application\Service\WithEventHandling')
-->withArgument('user.application.service.create_new_user.original')
-->withArgument('EventBus');
+    ->withArgument('user.application.service.create_new_user.original')
+    ->withArgument('EventBus');
 
 $container->add('store.application.service.create_new_drink.original', 'Store\Application\Service\CreateNewDrink')
-->withArgument('Store\Domain\Repository\DrinkRepository');
+    ->withArgument('Store\Domain\Repository\DrinkRepository');
 $container->add('store.application.service.create_new_drink', 'Core\Application\Service\WithEventHandling')
-->withArgument('user.application.service.create_new_drink.original')
-->withArgument('EventBus');
+    ->withArgument('store.application.service.create_new_drink.original')
+    ->withArgument('EventBus');
 
-$container->add('user.application.service.add_rated_drink_to_user.original', 'User\Application\Service\AddRatedDrinkToUser')
-->withArgument('User\Domain\Repository\UserRepository');
+$container->add('user.application.service.add_rated_drink_to_user.original',
+    'User\Application\Service\AddRatedDrinkToUser'
+)
+    ->withArgument('User\Domain\Repository\UserRepository');
 $container->add('user.application.service.add_rated_drink_to_user', 'Core\Application\Service\WithEventHandling')
-->withArgument('user.application.service.add_rated_drink_to_user.original')
-->withArgument('EventBus');
+    ->withArgument('user.application.service.add_rated_drink_to_user.original')
+    ->withArgument('EventBus');
 
 /** *** */
+
+$command_bus = $container->get('CommandBus');
+
+$create_new_user_command = new \Store\Application\Command\CreateNewDrink('Marcos Segovia');
+
+$command_bus->handle($create_new_user_command);

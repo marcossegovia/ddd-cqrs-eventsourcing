@@ -20,5 +20,4 @@ interface RatingRepository
         string $a_user_id,
         string $a_user_name
     );
-
 }

@@ -3,9 +3,10 @@
 namespace ReadModel\RatingSystem\Application\Subscriber;
 
 use ReadModel\RatingSystem\Domain\Repository\RatingRepository;
-use Store\Domain\Model\DrinkWasRated;
+use SimpleBus\Message\Message;
+use SimpleBus\Message\Subscriber\MessageSubscriber;
 
-class DrinkWasRatedHandler
+class DrinkWasRatedHandler implements MessageSubscriber
 {
     /** @var RatingRepository */
     private $rating_repository;
@@ -15,8 +16,15 @@ class DrinkWasRatedHandler
         $this->rating_repository = $a_rating_repository;
     }
 
-    public function __invoke(DrinkWasRated $event)
+    /**
+     * Provide the given message as a notification to this subscriber
+     *
+     * @param Message $message
+     *
+     * @return void
+     */
+    public function notify(Message $message)
     {
-        $this->rating_repository->updateRating($event->userId(), $event->drinkId());
+        $this->rating_repository->updateRating($message->userId(), $message->drinkId());
     }
 }

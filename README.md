@@ -1,6 +1,6 @@
 # DDD WITH CQRS
 
-This repo wants to be an attempt example of consolidating wwo Bounded Context (strategic DDD) with a CQRS architecture approach for splitting Write model from Read model.
+This repo wants to be an attempt example of consolidating two Bounded Context (strategic DDD) with a CQRS architecture approach for splitting Write model from Read model.
 
 ##Write Model
 
