@@ -1,6 +1,6 @@
 <?php
 
-namespace MarcosSegovia\User\Domain\Model;
+namespace User\Domain\Model;
 
 use Core\Domain\Model\AggregateRoot;
 

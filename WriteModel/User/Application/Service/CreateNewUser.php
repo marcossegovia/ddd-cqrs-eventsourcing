@@ -3,8 +3,8 @@
 namespace User\Application\Service;
 
 use Core\Application\Service\WithRecordedEvents;
-use MarcosSegovia\User\Domain\Model\User;
 use SimpleBus\Message\Message;
+use User\Domain\Model\User;
 use User\Domain\Repository\UserRepository;
 
 final class CreateNewUser extends WithRecordedEvents

@@ -7,11 +7,16 @@ use ReadModel\RatingSystem\Domain\Repository\RatingRepository as RatingRepositor
 
 class RatingRepository implements RatingRepositoryInterface
 {
-    private $drinks       = [];
-    private $users        = [];
+    /** @var array */
+    private $drinks = [];
+
+    /** @var array */
+    private $users = [];
+
+    /** @var array */
     private $users_drinks = [];
 
-    public function getUsersByNumberOfDrinks()
+    public function getUsersByNumberOfDrinksRated() : Rating
     {
         $users_with_drinks = [];
         foreach ($this->users as $user)
@@ -26,9 +31,19 @@ class RatingRepository implements RatingRepositoryInterface
                 $users_with_drinks[] = $user_to_insert;
             }
         }
-        $ratings = new Rating($this->users);
+        $rating = new Rating($users_with_drinks);
 
-        return $ratings;
+        return $rating;
+    }
+
+    public function getUsers() : array
+    {
+        return $this->users;
+    }
+
+    public function getDrinks() : array
+    {
+        return $this->drinks;
     }
 
     public function updateDrink(

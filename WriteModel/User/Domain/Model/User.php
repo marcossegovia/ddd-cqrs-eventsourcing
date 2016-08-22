@@ -1,12 +1,11 @@
 <?php
 
-namespace MarcosSegovia\User\Domain\Model;
+namespace User\Domain\Model;
 
 use SimpleBus\Message\Recorder\ContainsRecordedMessages;
 use SimpleBus\Message\Recorder\PrivateMessageRecorderCapabilities;
 use Store\Domain\Model\DrinkId;
 use Store\Domain\Model\DrinkWasRated;
-use User\Domain\Model\UserWasCreated;
 
 class User implements ContainsRecordedMessages
 {

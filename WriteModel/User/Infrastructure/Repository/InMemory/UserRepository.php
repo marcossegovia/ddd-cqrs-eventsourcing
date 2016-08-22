@@ -2,9 +2,9 @@
 
 namespace User\Infrastructure\Repository\InMemory;
 
-use MarcosSegovia\User\Domain\Model\User;
-use MarcosSegovia\User\Domain\Model\UserId;
 use Ramsey\Uuid\Uuid;
+use User\Domain\Model\User;
+use User\Domain\Model\UserId;
 use User\Domain\Repository\UserRepository as UserRepositoryInterface;
 
 class UserRepository implements UserRepositoryInterface

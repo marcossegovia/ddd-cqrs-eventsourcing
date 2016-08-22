@@ -142,6 +142,15 @@ $container
     )
     ->withArgument('ReadModel\RatingSystem\Domain\Repository\RatingRepository');
 
+$container->add('read_model.rating_system.application.service.get_user_drinks_rated',
+    'ReadModel\RatingSystem\Application\Service\GetUserDrinksRated'
+)->withArgument('ReadModel\RatingSystem\Domain\Repository\RatingRepository');
+$container->add('read_model.rating_system.application.service.get_users',
+    'ReadModel\RatingSystem\Application\Service\GetUsers'
+)->withArgument('ReadModel\RatingSystem\Domain\Repository\RatingRepository');
+$container->add('read_model.rating_system.application.service.get_drinks',
+    'ReadModel\RatingSystem\Application\Service\GetDrinks'
+)->withArgument('ReadModel\RatingSystem\Domain\Repository\RatingRepository');
 /** *** */
 
 /** WRITE MODEL DI */
@@ -164,11 +173,10 @@ $container->add('store.application.service.create_new_drink.original', 'Store\Ap
 $container->add('store.application.service.create_new_drink', 'Core\Application\Service\WithEventHandling')
     ->withArgument('store.application.service.create_new_drink.original')
     ->withArgument('EventBus');
-
 $container->add('user.application.service.add_rated_drink_to_user.original',
     'User\Application\Service\AddRatedDrinkToUser'
-)
-    ->withArgument('User\Domain\Repository\UserRepository');
+)->withArgument('User\Domain\Repository\UserRepository');
+
 $container->add('user.application.service.add_rated_drink_to_user', 'Core\Application\Service\WithEventHandling')
     ->withArgument('user.application.service.add_rated_drink_to_user.original')
     ->withArgument('EventBus');
@@ -177,6 +185,21 @@ $container->add('user.application.service.add_rated_drink_to_user', 'Core\Applic
 
 $command_bus = $container->get('CommandBus');
 
-$create_new_user_command = new \Store\Application\Command\CreateNewDrink('Marcos Segovia');
+$create_new_user_command = new \User\Application\Command\CreateNewUser('Marcos Segovia');
+$create_new_drink_command = new \Store\Application\Command\CreateNewDrink('Pruno');
 
 $command_bus->handle($create_new_user_command);
+$command_bus->handle($create_new_drink_command);
+
+$get_users_use_case = $container->get('read_model.rating_system.application.service.get_users');
+$users = $get_users_use_case->__invoke();
+$get_drinks_use_case = $container->get('read_model.rating_system.application.service.get_drinks');
+$drinks = $get_drinks_use_case->__invoke();
+
+$add_rated_drink_to_user_command = new \User\Application\Command\AddRatedDrinkToUser(array_pop($drinks)['id'], array_pop($users)['id']);
+
+$command_bus->handle($add_rated_drink_to_user_command);
+
+$user_drinks_rated_use_case = $container->get('read_model.rating_system.application.service.get_user_drinks_rated');
+
+var_dump($user_drinks_rated_use_case->__invoke());

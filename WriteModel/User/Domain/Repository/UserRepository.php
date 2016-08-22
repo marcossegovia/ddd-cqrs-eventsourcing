@@ -2,8 +2,8 @@
 
 namespace User\Domain\Repository;
 
-use MarcosSegovia\User\Domain\Model\User;
-use MarcosSegovia\User\Domain\Model\UserId;
+use User\Domain\Model\User;
+use User\Domain\Model\UserId;
 
 interface UserRepository
 {
