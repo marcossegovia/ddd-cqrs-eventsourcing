@@ -200,6 +200,6 @@ $add_rated_drink_to_user_command = new \User\Application\Command\AddRatedDrinkTo
 
 $command_bus->handle($add_rated_drink_to_user_command);
 
-$user_drinks_rated_use_case = $container->get('read_model.rating_system.application.service.get_user_drinks_rated');
+$get_user_drinks_rated_use_case = $container->get('read_model.rating_system.application.service.get_user_drinks_rated');
 
-var_dump($user_drinks_rated_use_case->__invoke());
+var_dump($get_user_drinks_rated_use_case->__invoke());
