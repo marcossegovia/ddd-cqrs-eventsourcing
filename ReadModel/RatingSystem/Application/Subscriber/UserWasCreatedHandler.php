@@ -26,6 +26,6 @@ class UserWasCreatedHandler implements MessageSubscriber
      */
     public function notify(Message $message)
     {
-        $this->rating_repository->updateUser($message->id(), $message->name());
+        $this->rating_repository->updateUser($message->aggregateId(), $message->name());
     }
 }

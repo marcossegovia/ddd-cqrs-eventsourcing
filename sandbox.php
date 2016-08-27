@@ -11,6 +11,9 @@ use SimpleBus\Message\Name\ClassBasedNameResolver;
 use SimpleBus\Message\Subscriber\Collection\LazyLoadingMessageSubscriberCollection;
 use SimpleBus\Message\Subscriber\NotifiesMessageSubscribersMiddleware;
 use SimpleBus\Message\Subscriber\Resolver\NameBasedMessageSubscriberResolver;
+use Store\Domain\Model\Drink;
+use User\Domain\Model\User;
+use User\Domain\Repository\UserRepository;
 
 require __DIR__ . '/vendor/autoload.php';
 
@@ -202,4 +205,20 @@ $command_bus->handle($add_rated_drink_to_user_command);
 
 $get_user_drinks_rated_use_case = $container->get('read_model.rating_system.application.service.get_user_drinks_rated');
 
-var_dump($get_user_drinks_rated_use_case->__invoke());
+
+$user_repository = new \User\Infrastructure\Repository\InMemory\UserRepository();
+$drink_repository = new \Store\Infrastructure\Repository\InMemory\DrinkRepository();
+$user = User::create($user_repository->nextIdentity(), 'Marcos');
+$drink = Drink::create($drink_repository->nextIdentity(), 'Jaggeeeer');
+$user->addDrink($drink->id());
+
+$event_store = new \Core\Infrastructure\EventStore\InMemory\EventStore();
+
+$event_store->add($user);
+
+$events = $event_store->retrieveEventsFrom($user->id());
+
+$reconstituted_user = User::reconstituteFrom($user->id(), $events);
+
+if($user == $reconstituted_user) echo 'equals !';
+

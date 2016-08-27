@@ -25,6 +25,6 @@ class DrinkWasRatedHandler implements MessageSubscriber
      */
     public function notify(Message $message)
     {
-        $this->rating_repository->updateRating($message->userId(), $message->drinkId());
+        $this->rating_repository->updateRating($message->aggregateId(), $message->drinkId());
     }
 }

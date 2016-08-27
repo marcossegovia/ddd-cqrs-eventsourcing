@@ -2,9 +2,9 @@
 
 namespace User\Domain\Model;
 
-use SimpleBus\Message\Type\Event;
+use Core\Domain\Model\DomainEvent;
 
-class UserWasCreated implements Event
+class UserWasCreated implements DomainEvent
 {
     /** @var string */
     private $id;
@@ -24,7 +24,7 @@ class UserWasCreated implements Event
     /**
      * @return string
      */
-    public function id()
+    public function aggregateId()
     {
         return $this->id;
     }

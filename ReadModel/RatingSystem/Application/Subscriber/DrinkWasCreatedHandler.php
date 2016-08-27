@@ -25,7 +25,7 @@ class DrinkWasCreatedHandler implements MessageSubscriber
      */
     public function notify(Message $message)
     {
-        $this->rating_repository->updateDrink($message->id(), $message->name());
+        $this->rating_repository->updateDrink($message->aggregateId(), $message->name());
 
     }
 }

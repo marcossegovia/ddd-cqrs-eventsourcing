@@ -2,9 +2,9 @@
 
 namespace Store\Domain\Model;
 
-use SimpleBus\Message\Type\Event;
+use Core\Domain\Model\DomainEvent;
 
-class DrinkWasCreated implements Event
+class DrinkWasCreated implements DomainEvent
 {
     /** @var string */
     private $id;
@@ -24,9 +24,10 @@ class DrinkWasCreated implements Event
     /**
      * @return string
      */
-    public function id()
+    public function aggregateId()
     {
         return $this->id;
+
     }
 
     /**
@@ -36,5 +37,4 @@ class DrinkWasCreated implements Event
     {
         return $this->name;
     }
-
 }
