@@ -1,6 +1,6 @@
 # DDD, Hexagonal, CQRS and Event-Sourcing
 
-This repo wants to be an attempt example of consolidating two Bounded Context (strategic DDD) with a CQRS architecture approach for splitting Write model from Read model and applying Event-Sourcing to be able to store the events, project their data into the ReadModel and Replay Aggregates anywhere in time.
+This repository wants to be a one more example of consolidating two Bounded Context (strategic DDD) with a CQRS architecture approach for splitting Write model from Read model. Also applying Event-Sourcing to be able to store the events, project their data into the ReadModel and replay Aggregates anywhere in time.
 
 ## Write Model
 
