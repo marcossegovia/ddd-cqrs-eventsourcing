@@ -32,7 +32,6 @@ final class EventStore implements MessageBusMiddleware, EventStoreInterface
 
     public function getEventsFrom(AggregateRoot $an_aggregate_root)
     {
-        dump($an_aggregate_root->__toString());
         return $this->events[$an_aggregate_root->__toString()];
     }
 }
