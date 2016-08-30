@@ -2,40 +2,39 @@
 
 namespace Store\Domain\Model;
 
-use SimpleBus\Message\Type\Event;
+use Core\Domain\Model\DomainEvent;
+use User\Domain\Model\UserId;
 
-class DrinkWasRated implements Event
+class DrinkWasRated implements DomainEvent
 {
-    /** @var string */
-    private $drink_id;
-    
-    /** @var string */
+    /** @var UserId */
     private $user_id;
 
+    /** @var DrinkId */
+    private $drink_id;
+
     public function __construct(
-        $a_drink_id,
-        $a_user_id
+        UserId $a_user_id,
+        DrinkId $a_drink_id
     )
     {
+        $this->user_id  = $a_user_id;
         $this->drink_id = $a_drink_id;
-        $this->user_id = $a_user_id;
     }
 
     /**
-     * @return string
+     * @return UserId
+     */
+    public function aggregateId()
+    {
+        return $this->user_id;
+    }
+
+    /**
+     * @return DrinkId
      */
     public function drinkId()
     {
         return $this->drink_id;
     }
-
-    /**
-     * @return string
-     */
-    public function userId()
-    {
-        return $this->user_id;
-    }
-
-    
 }

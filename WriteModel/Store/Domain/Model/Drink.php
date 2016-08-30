@@ -2,14 +2,12 @@
 
 namespace Store\Domain\Model;
 
+use Core\Domain\Model\MessageRecorderCapabilities;
 use SimpleBus\Message\Recorder\ContainsRecordedMessages;
-use SimpleBus\Message\Recorder\PrivateMessageRecorderCapabilities;
 
 class Drink implements ContainsRecordedMessages
 {
-    const IS_NEW = 'is_new';
-
-    use PrivateMessageRecorderCapabilities;
+    use MessageRecorderCapabilities;
 
     /** @var DrinkId */
     private $id;
@@ -17,18 +15,11 @@ class Drink implements ContainsRecordedMessages
     /** @var string */
     private $name;
 
-    protected function __construct(
-        DrinkId $an_id,
-        string $a_name,
-        string $is_new
+    private function __construct(
+        DrinkId $an_id
     )
     {
         $this->id   = $an_id;
-        $this->name = $a_name;
-        if (self::IS_NEW === $is_new)
-        {
-            $this->record(new DrinkWasCreated($an_id, $a_name));
-        }
     }
 
     public static function create(
@@ -36,7 +27,11 @@ class Drink implements ContainsRecordedMessages
         string $a_name
     )
     {
-        return new self($an_id, $a_name, self::IS_NEW);
+        $drink = new self($an_id, $a_name);
+        $drink->setName($a_name);
+        $drink->record(new DrinkWasCreated($an_id, $a_name));
+
+        return $drink;
     }
 
     /**
@@ -53,6 +48,11 @@ class Drink implements ContainsRecordedMessages
     public function name()
     {
         return $this->name;
+    }
+
+    private function setName($a_name)
+    {
+        $this->name = $a_name;
     }
 
 }
