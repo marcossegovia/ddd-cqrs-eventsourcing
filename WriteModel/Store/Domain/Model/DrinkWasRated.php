@@ -3,18 +3,19 @@
 namespace Store\Domain\Model;
 
 use Core\Domain\Model\DomainEvent;
+use User\Domain\Model\UserId;
 
 class DrinkWasRated implements DomainEvent
 {
-    /** @var string */
+    /** @var UserId */
     private $user_id;
 
-    /** @var string */
+    /** @var DrinkId */
     private $drink_id;
 
     public function __construct(
-        $a_user_id,
-        $a_drink_id
+        UserId $a_user_id,
+        DrinkId $a_drink_id
     )
     {
         $this->user_id  = $a_user_id;
@@ -22,7 +23,7 @@ class DrinkWasRated implements DomainEvent
     }
 
     /**
-     * @return string
+     * @return UserId
      */
     public function aggregateId()
     {
@@ -30,7 +31,7 @@ class DrinkWasRated implements DomainEvent
     }
 
     /**
-     * @return string
+     * @return DrinkId
      */
     public function drinkId()
     {

@@ -3,6 +3,8 @@
 namespace ReadModel\RatingSystem\Domain\Repository;
 
 use ReadModel\RatingSystem\Domain\Model\Rating;
+use Store\Domain\Model\DrinkId;
+use User\Domain\Model\UserId;
 
 interface RatingRepository
 {
@@ -13,17 +15,17 @@ interface RatingRepository
     public function getDrinks() : array;
 
     public function updateDrink(
-        string $a_drink_id,
+        DrinkId $a_drink_id,
         string $a_drink_name
     );
 
     public function updateRating(
-        string $a_user_id,
-        string $a_drink_id
+        UserId $a_user_id,
+        DrinkId $a_drink_id
     );
 
     public function updateUser(
-        string $a_user_id,
+        UserId $a_user_id,
         string $a_user_name
     );
 }

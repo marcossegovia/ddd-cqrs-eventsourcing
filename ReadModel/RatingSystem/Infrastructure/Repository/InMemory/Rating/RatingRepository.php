@@ -4,6 +4,8 @@ namespace ReadModel\RatingSystem\Infrastructure\Repository\InMemory\Rating;
 
 use ReadModel\RatingSystem\Domain\Model\Rating;
 use ReadModel\RatingSystem\Domain\Repository\RatingRepository as RatingRepositoryInterface;
+use Store\Domain\Model\DrinkId;
+use User\Domain\Model\UserId;
 
 class RatingRepository implements RatingRepositoryInterface
 {
@@ -47,44 +49,44 @@ class RatingRepository implements RatingRepositoryInterface
     }
 
     public function updateDrink(
-        string $a_drink_id,
+        DrinkId $a_drink_id,
         string $a_drink_name
     )
     {
         $drink_data = [
-            'id'   => $a_drink_id,
+            'id'   => $a_drink_id->__toString(),
             'name' => $a_drink_name
         ];
 
-        $this->drinks[$a_drink_id] = $drink_data;
+        $this->drinks[$a_drink_id->__toString()] = $drink_data;
     }
 
     public function updateRating(
-        string $a_user_id,
-        string $a_drink_id
+        UserId $a_user_id,
+        DrinkId $a_drink_id
     )
     {
-        $rated_drinks    = isset($this->users_drinks[$a_user_id]['rated_drinks']) ?
-            $this->users_drinks[$a_user_id]['rated_drinks'] : [];
+        $rated_drinks    = isset($this->users_drinks[$a_user_id->__toString()]['rated_drinks']) ?
+            $this->users_drinks[$a_user_id->__toString()]['rated_drinks'] : [];
         $rated_drinks[]  = $a_drink_id;
         $user_drink_data = [
-            'id'           => $a_user_id,
+            'id'           => $a_user_id->__toString(),
             'rated_drinks' => $rated_drinks
         ];
 
-        $this->users_drinks[$a_user_id] = $user_drink_data;
+        $this->users_drinks[$a_user_id->__toString()] = $user_drink_data;
     }
 
     public function updateUser(
-        string $a_user_id,
+        UserId $a_user_id,
         string $a_user_name
     )
     {
         $user_data = [
-            'id'   => $a_user_id,
+            'id'   => $a_user_id->__toString(),
             'name' => $a_user_name
         ];
 
-        $this->users[$a_user_id] = $user_data;
+        $this->users[$a_user_id->__toString()] = $user_data;
     }
 }

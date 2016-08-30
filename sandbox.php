@@ -13,12 +13,16 @@ use SimpleBus\Message\Subscriber\NotifiesMessageSubscribersMiddleware;
 use SimpleBus\Message\Subscriber\Resolver\NameBasedMessageSubscriberResolver;
 use Store\Domain\Model\Drink;
 use User\Domain\Model\User;
-use User\Domain\Repository\UserRepository;
+use User\Domain\Model\UserId;
 
 require __DIR__ . '/vendor/autoload.php';
 
 $container = new League\Container\Container;
 
+/** EVENT STORE */
+$container->share('Core\Domain\Infrastructure\EventStore', 'Core\Infrastructure\EventStore\InMemory\EventStore');
+
+/** *** */
 /** EVENT BUS */
 
 $container->share('EventBus',
@@ -29,18 +33,19 @@ $container->share('EventBus',
     {
         $eventSubscribersByEventName = [
             \User\Domain\Model\UserWasCreated::class   => [
-                'read_model.rating_system.application.subscriber.user_was_created_handler'
+                'read_model.rating_system.application.subscriber.user_projector'
             ],
             \Store\Domain\Model\DrinkWasCreated::class => [
-                'read_model.rating_system.application.subscriber.drink_was_created_handler'
+                'read_model.rating_system.application.subscriber.drink_projector'
             ],
             \Store\Domain\Model\DrinkWasRated::class   => [
-                'read_model.rating_system.application.subscriber.drink_was_rated_handler'
+                'read_model.rating_system.application.subscriber.drink_projector'
             ],
         ];
 
         $event_bus = new MessageBusSupportingMiddleware();
         $event_bus->appendMiddleware(new FinishesHandlingMessageBeforeHandlingNext());
+        $event_bus->appendMiddleware($container->get('Core\Domain\Infrastructure\EventStore'));
 
         $serviceLocator = function($serviceId) use
         (
@@ -131,17 +136,13 @@ $container->share('ReadModel\RatingSystem\Domain\Repository\RatingRepository',
     'ReadModel\RatingSystem\Infrastructure\Repository\InMemory\Rating\RatingRepository'
 );
 $container
-    ->share('read_model.rating_system.application.subscriber.user_was_created_handler',
-        'ReadModel\RatingSystem\Application\Subscriber\UserWasCreatedHandler'
-    )->withArgument('ReadModel\RatingSystem\Domain\Repository\RatingRepository');
-$container
-    ->share('read_model.rating_system.application.subscriber.drink_was_created_handler',
-        'ReadModel\RatingSystem\Application\Subscriber\DrinkWasCreatedHandler'
+    ->share('read_model.rating_system.application.subscriber.drink_projector',
+        'ReadModel\RatingSystem\Application\Subscriber\DrinkProjector'
     )
     ->withArgument('ReadModel\RatingSystem\Domain\Repository\RatingRepository');
 $container
-    ->share('read_model.rating_system.application.subscriber.drink_was_rated_handler',
-        'ReadModel\RatingSystem\Application\Subscriber\DrinkWasRatedHandler'
+    ->share('read_model.rating_system.application.subscriber.user_projector',
+        'ReadModel\RatingSystem\Application\Subscriber\UserProjector'
     )
     ->withArgument('ReadModel\RatingSystem\Domain\Repository\RatingRepository');
 
@@ -176,10 +177,10 @@ $container->add('store.application.service.create_new_drink.original', 'Store\Ap
 $container->add('store.application.service.create_new_drink', 'Core\Application\Service\WithEventHandling')
     ->withArgument('store.application.service.create_new_drink.original')
     ->withArgument('EventBus');
+
 $container->add('user.application.service.add_rated_drink_to_user.original',
     'User\Application\Service\AddRatedDrinkToUser'
 )->withArgument('User\Domain\Repository\UserRepository');
-
 $container->add('user.application.service.add_rated_drink_to_user', 'Core\Application\Service\WithEventHandling')
     ->withArgument('user.application.service.add_rated_drink_to_user.original')
     ->withArgument('EventBus');
@@ -188,37 +189,34 @@ $container->add('user.application.service.add_rated_drink_to_user', 'Core\Applic
 
 $command_bus = $container->get('CommandBus');
 
-$create_new_user_command = new \User\Application\Command\CreateNewUser('Marcos Segovia');
+$create_new_user_command  = new \User\Application\Command\CreateNewUser('Marcos Segovia');
 $create_new_drink_command = new \Store\Application\Command\CreateNewDrink('Pruno');
 
 $command_bus->handle($create_new_user_command);
 $command_bus->handle($create_new_drink_command);
 
-$get_users_use_case = $container->get('read_model.rating_system.application.service.get_users');
-$users = $get_users_use_case->__invoke();
+$get_users_use_case  = $container->get('read_model.rating_system.application.service.get_users');
+$users               = $get_users_use_case->__invoke();
 $get_drinks_use_case = $container->get('read_model.rating_system.application.service.get_drinks');
-$drinks = $get_drinks_use_case->__invoke();
+$drinks              = $get_drinks_use_case->__invoke();
 
-$add_rated_drink_to_user_command = new \User\Application\Command\AddRatedDrinkToUser(array_pop($drinks)['id'], array_pop($users)['id']);
+$raw_user_id  = array_pop($users)['id'];
+$raw_drink_id = array_pop($drinks)['id'];
 
+$add_rated_drink_to_user_command = new \User\Application\Command\AddRatedDrinkToUser($raw_drink_id,
+    $raw_user_id
+);
 $command_bus->handle($add_rated_drink_to_user_command);
 
 $get_user_drinks_rated_use_case = $container->get('read_model.rating_system.application.service.get_user_drinks_rated');
 
+$event_store = $container->get('Core\Domain\Infrastructure\EventStore');
 
-$user_repository = new \User\Infrastructure\Repository\InMemory\UserRepository();
-$drink_repository = new \Store\Infrastructure\Repository\InMemory\DrinkRepository();
-$user = User::create($user_repository->nextIdentity(), 'Marcos');
-$drink = Drink::create($drink_repository->nextIdentity(), 'Jaggeeeer');
-$user->addDrink($drink->id());
+$user_id = UserId::fromString($raw_user_id);
 
-$event_store = new \Core\Infrastructure\EventStore\InMemory\EventStore();
+$events = $event_store->getEventsFrom($user_id);
+$reconstituted_user = User::reconstituteFrom($user_id, $events);
 
-$event_store->add($user);
-
-$events = $event_store->retrieveEventsFrom($user->id());
-
-$reconstituted_user = User::reconstituteFrom($user->id(), $events);
-
-if($user == $reconstituted_user) echo 'equals !';
+// Reconstituted User is Marcos Segovia with Pruno added as a rated drink.
+dump($reconstituted_user);
 

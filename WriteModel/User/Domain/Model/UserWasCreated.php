@@ -6,15 +6,15 @@ use Core\Domain\Model\DomainEvent;
 
 class UserWasCreated implements DomainEvent
 {
-    /** @var string */
+    /** @var UserId */
     private $id;
 
     /** @var string */
     private $name;
 
     public function __construct(
-        $a_id,
-        $a_name
+        UserId $a_id,
+        string $a_name
     )
     {
         $this->id   = $a_id;
@@ -22,7 +22,7 @@ class UserWasCreated implements DomainEvent
     }
 
     /**
-     * @return string
+     * @return UserId
      */
     public function aggregateId()
     {

@@ -5,9 +5,10 @@ namespace ReadModel\RatingSystem\Application\Subscriber;
 use ReadModel\RatingSystem\Domain\Repository\RatingRepository;
 use SimpleBus\Message\Message;
 use SimpleBus\Message\Subscriber\MessageSubscriber;
-use User\Domain\Model\UserWasCreated;
+use Store\Domain\Model\DrinkWasCreated;
+use Store\Domain\Model\DrinkWasRated;
 
-class UserWasCreatedHandler implements MessageSubscriber
+final class DrinkProjector implements MessageSubscriber
 {
     /** @var RatingRepository */
     private $rating_repository;
@@ -26,6 +27,13 @@ class UserWasCreatedHandler implements MessageSubscriber
      */
     public function notify(Message $message)
     {
-        $this->rating_repository->updateUser($message->aggregateId(), $message->name());
+        if ($message instanceof DrinkWasRated)
+        {
+            $this->rating_repository->updateRating($message->aggregateId(), $message->drinkId());
+        }
+        if ($message instanceof DrinkWasCreated)
+        {
+            $this->rating_repository->updateDrink($message->aggregateId(), $message->name());
+        }
     }
 }
