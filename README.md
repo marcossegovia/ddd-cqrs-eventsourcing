@@ -18,9 +18,9 @@ DB in Read Model is completely optimised to perform reads from clients. Multiple
 It is a good idea to provide specific views for specific roles within the application.
 
 
-## Event Subscriber
+## Projections
 
-A special subscriber registers to receive all Domain Events published by the Write Model.
-The Subscriber uses each Domain Event to update the Read Model to reflect the most recent changes to the Write Model.
+Special subscribers registers to receive all Domain Events published by the Write Model.
+The Subscriber uses each Domain Event to update the Read Model in order to reflect the most recent changes from the Write Model.
 So it implies that **each Event must be rich enough to supply all the data necessary** to produce the correct state in the Read Model. 
 --- Implementing Domain Driven Design. Vaughn Vernon.
