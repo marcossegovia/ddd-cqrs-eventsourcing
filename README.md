@@ -1,6 +1,6 @@
-# DDD WITH CQRS
+# DDD, CQRS AND Event-Sourcing
 
-This repo wants to be an attempt example of consolidating two Bounded Context (strategic DDD) with a CQRS architecture approach for splitting Write model from Read model.
+This repo wants to be an attempt example of consolidating two Bounded Context (strategic DDD) with a CQRS architecture approach for splitting Write model from Read model and applying Event-Sourcing to be able to store the events, project their data into the ReadModel and Replay Aggregates anywhere in time.
 
 ##Write Model
 
