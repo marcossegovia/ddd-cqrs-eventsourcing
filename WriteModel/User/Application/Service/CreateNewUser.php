@@ -20,7 +20,7 @@ final class CreateNewUser implements ApplicationService
 
     public function __invoke(CreateNewUserCommand $command)
     {
-        $user = User::create($this->user_repository->nextIdentity(), $command->name(), new Email($command->email()));
+        $user = User::create($this->user_repository->nextIdentity(), $command->name(), $command->email());
         $this->user_repository->add($user);
     }
 }

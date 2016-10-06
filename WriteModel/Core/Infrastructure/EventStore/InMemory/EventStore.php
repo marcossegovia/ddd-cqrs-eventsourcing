@@ -26,7 +26,7 @@ final class EventStore implements MessageBusMiddleware, EventStoreInterface
         callable $next
     )
     {
-        $this->events[$message->aggregateId()][] = $message;
+        $this->events[$message->aggregateId()->__toString()][] = $message;
         $next($message);
     }
 
