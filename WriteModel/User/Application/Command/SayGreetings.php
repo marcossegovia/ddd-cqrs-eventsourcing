@@ -4,7 +4,7 @@ namespace User\Application\Command;
 
 use SimpleBus\Message\Type\Command;
 
-class CreateNewUser implements Command
+final class SayGreetings implements Command
 {
     /** @var string */
     private $name;
@@ -33,4 +33,5 @@ class CreateNewUser implements Command
     {
         return $this->email;
     }
+
 }

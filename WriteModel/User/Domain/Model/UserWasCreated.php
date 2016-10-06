@@ -4,7 +4,7 @@ namespace User\Domain\Model;
 
 use Core\Domain\Model\DomainEvent;
 
-class UserWasCreated implements DomainEvent
+final class UserWasCreated implements DomainEvent
 {
     /** @var UserId */
     private $id;
@@ -12,13 +12,18 @@ class UserWasCreated implements DomainEvent
     /** @var string */
     private $name;
 
+    /** @var Email */
+    private $email;
+
     public function __construct(
         UserId $a_id,
-        string $a_name
+        string $a_name,
+        Email $an_email
     )
     {
         $this->id   = $a_id;
         $this->name = $a_name;
+        $this->email = $an_email;
     }
 
     /**
@@ -35,5 +40,13 @@ class UserWasCreated implements DomainEvent
     public function name()
     {
         return $this->name;
+    }
+
+    /**
+     * @return Email
+     */
+    public function email()
+    {
+        return $this->email;
     }
 }

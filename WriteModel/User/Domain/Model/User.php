@@ -3,7 +3,6 @@
 namespace User\Domain\Model;
 
 use Core\Domain\IsEventSourced;
-use Core\Domain\Model\AggregateHistory;
 use Core\Domain\Model\AggregateRoot;
 use Core\Domain\Model\DomainEvent;
 use Core\Domain\Model\MessageRecorderCapabilities;
@@ -11,7 +10,7 @@ use SimpleBus\Message\Recorder\ContainsRecordedMessages;
 use Store\Domain\Model\DrinkId;
 use Store\Domain\Model\DrinkWasRated;
 
-class User implements ContainsRecordedMessages, IsEventSourced
+final class User implements ContainsRecordedMessages, IsEventSourced
 {
     use MessageRecorderCapabilities;
 
@@ -20,6 +19,9 @@ class User implements ContainsRecordedMessages, IsEventSourced
 
     /** @var string */
     private $name;
+
+    /** @var Email */
+    private $email;
 
     /** @var array */
     private $rated_drinks;
@@ -33,13 +35,15 @@ class User implements ContainsRecordedMessages, IsEventSourced
 
     public static function create(
         UserId $an_id,
-        string $a_name
+        string $a_name,
+        Email $an_email
     )
     {
         $user = new self($an_id);
         $user->setName($a_name);
+        $user->setEmail($an_email);
         $user->setRatedDrinks([]);
-        $user->record(new UserWasCreated($an_id, $a_name));
+        $user->record(new UserWasCreated($an_id, $a_name, $an_email));
 
         return $user;
     }
@@ -47,6 +51,11 @@ class User implements ContainsRecordedMessages, IsEventSourced
     private function setName(string $a_name)
     {
         $this->name = $a_name;
+    }
+
+    private function setEmail($an_email)
+    {
+        $this->email = $an_email;
     }
 
     private function setRatedDrinks(array $some_rated_drinks)
@@ -106,12 +115,13 @@ class User implements ContainsRecordedMessages, IsEventSourced
         $method = 'apply' . (new \ReflectionClass($event))->getShortName();
         $this->$method($event);
     }
-
     private function applyUserWasCreated(UserWasCreated $event)
     {
         $this->setName($event->name());
+        $this->setEmail($event->email());
         $this->setRatedDrinks([]);
     }
+
     private function applyDrinkWasRated(DrinkWasRated $event)
     {
         $this->rated_drinks[] = $event->drinkId();
