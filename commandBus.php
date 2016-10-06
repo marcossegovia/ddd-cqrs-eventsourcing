@@ -135,14 +135,17 @@ $container->share(
 );
 
 //Subscribers
-$container->share(
-    'read_model.rating_system.application.subscriber.drink_projector',
-    'ReadModel\RatingSystem\Application\Subscriber\DrinkProjector'
-)->withArgument('ReadModel\RatingSystem\Domain\Repository\RatingRepository');
-$container->share(
-    'read_model.rating_system.application.subscriber.user_projector',
-    'ReadModel\RatingSystem\Application\Subscriber\UserProjector'
-)->withArgument('ReadModel\RatingSystem\Domain\Repository\RatingRepository');
+$container->share('read_model.rating_system.application.subscriber.drink_projector.original', 'ReadModel\RatingSystem\Application\Subscriber\DrinkProjector')->withArgument(
+    'ReadModel\RatingSystem\Domain\Repository\RatingRepository'
+);
+$container->share('read_model.rating_system.application.subscriber.drink_projector', 'Core\Application\Subscriber\IsSubscribedToEvents')->withArgument(
+    'read_model.rating_system.application.subscriber.drink_projector.original');
+
+$container->share('read_model.rating_system.application.subscriber.user_projector.original', 'ReadModel\RatingSystem\Application\Subscriber\UserProjector')->withArgument(
+    'ReadModel\RatingSystem\Domain\Repository\RatingRepository'
+);
+$container->share('read_model.rating_system.application.subscriber.user_projector', 'Core\Application\Subscriber\IsSubscribedToEvents')->withArgument(
+    'read_model.rating_system.application.subscriber.drink_projector.original');
 
 //Use cases
 $container->add(
@@ -172,9 +175,11 @@ $container->share(
 );
 
 //Subscribers
-
-$container->add('user.application.subscriber.say_greetings_when_user_was_created', 'User\Application\Subscriber\SayGreetingsWhenUserWasCreated')->withArgument(
+$container->add('user.application.subscriber.say_greetings_when_user_was_created.original', 'User\Application\Subscriber\SayGreetingsWhenUserWasCreated')->withArgument(
     'CommandBus'
+);
+$container->add('user.application.subscriber.say_greetings_when_user_was_created', 'Core\Application\Subscriber\IsSubscribedToEvents')->withArgument(
+    'user.application.subscriber.say_greetings_when_user_was_created.original'
 );
 
 //Use cases with EventHandling

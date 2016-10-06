@@ -2,7 +2,6 @@
 
 namespace Core\Application\Service;
 
-use Core\Application\ApplicationService;
 use Core\Domain\Infrastructure\EventBus;
 use Core\Infrastructure\EventBus\DomainEventRecorder;
 use SimpleBus\Message\Bus\MessageBus;

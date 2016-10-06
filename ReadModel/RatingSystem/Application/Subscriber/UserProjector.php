@@ -2,12 +2,11 @@
 
 namespace ReadModel\RatingSystem\Application\Subscriber;
 
+use Core\Application\Subscriber\ApplicationSubscriber;
 use ReadModel\RatingSystem\Domain\Repository\RatingRepository;
-use SimpleBus\Message\Message;
-use SimpleBus\Message\Subscriber\MessageSubscriber;
 use User\Domain\Model\UserWasCreated;
 
-final class UserProjector implements MessageSubscriber
+final class UserProjector implements ApplicationSubscriber
 {
     /** @var RatingRepository */
     private $rating_repository;
@@ -17,14 +16,7 @@ final class UserProjector implements MessageSubscriber
         $this->rating_repository = $a_rating_repository;
     }
 
-    /**
-     * Provide the given message as a notification to this subscriber
-     *
-     * @param Message $message
-     *
-     * @return void
-     */
-    public function notify(Message $message)
+    public function __invoke(UserWasCreated $event)
     {
         if ($message instanceof UserWasCreated)
         {

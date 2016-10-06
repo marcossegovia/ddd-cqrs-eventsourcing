@@ -6,13 +6,13 @@ use Core\Domain\Model\DomainEvent;
 
 final class UserWasCreated implements DomainEvent
 {
-    /** @var UserId */
+    /** @var string */
     private $id;
 
     /** @var string */
     private $name;
 
-    /** @var Email */
+    /** @var string */
     private $email;
 
     public function __construct(
@@ -21,13 +21,13 @@ final class UserWasCreated implements DomainEvent
         Email $an_email
     )
     {
-        $this->id   = $a_id;
-        $this->name = $a_name;
-        $this->email = $an_email;
+        $this->id    = (string) $a_id;
+        $this->name  = $a_name;
+        $this->email = $an_email->value();
     }
 
     /**
-     * @return UserId
+     * @return string
      */
     public function aggregateId()
     {
@@ -43,7 +43,7 @@ final class UserWasCreated implements DomainEvent
     }
 
     /**
-     * @return Email
+     * @return string
      */
     public function email()
     {

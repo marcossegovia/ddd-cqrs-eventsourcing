@@ -2,13 +2,12 @@
 
 namespace User\Application\Subscriber;
 
+use Core\Application\Subscriber\ApplicationSubscriber;
 use SimpleBus\Message\Bus\MessageBus;
-use SimpleBus\Message\Message;
-use SimpleBus\Message\Subscriber\MessageSubscriber;
 use User\Application\Command\SayGreetings;
 use User\Domain\Model\UserWasCreated;
 
-final class SayGreetingsWhenUserWasCreated implements MessageSubscriber
+final class SayGreetingsWhenUserWasCreated implements ApplicationSubscriber
 {
     /** @var MessageBus */
     private $command_bus;
@@ -18,12 +17,9 @@ final class SayGreetingsWhenUserWasCreated implements MessageSubscriber
         $this->command_bus = $a_command_bus;
     }
 
-    public function notify(Message $message)
+    public function __invoke(UserWasCreated $event)
     {
-        if ($message instanceof UserWasCreated)
-        {
-            $greetings_command = new SayGreetings($message->name(), $message->email());
-            $this->command_bus->handle($greetings_command);
-        }
+        $greetings_command = new SayGreetings($event->name(), $event->email());
+        $this->command_bus->handle($greetings_command);
     }
 }

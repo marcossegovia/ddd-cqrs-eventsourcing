@@ -16,7 +16,7 @@ class CreateNewUser implements Command
     public function __construct($a_name, $an_email)
     {
         $this->name  = $a_name;
-        $this->email = new Email($an_email);
+        $this->email = $an_email;
     }
 
     /**

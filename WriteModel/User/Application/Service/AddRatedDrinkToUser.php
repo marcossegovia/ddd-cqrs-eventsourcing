@@ -2,7 +2,7 @@
 
 namespace User\Application\Service;
 
-use Core\Application\ApplicationService;
+use Core\Application\Service\ApplicationService;
 use User\Domain\Repository\UserRepository;
 use User\Application\Command\AddRatedDrinkToUser as AddRatedDrinkToUserCommand;
 

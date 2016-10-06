@@ -2,13 +2,13 @@
 
 namespace ReadModel\RatingSystem\Application\Subscriber;
 
+use Core\Application\Subscriber\ApplicationSubscriber;
+use Core\Domain\Model\DomainEvent;
 use ReadModel\RatingSystem\Domain\Repository\RatingRepository;
-use SimpleBus\Message\Message;
-use SimpleBus\Message\Subscriber\MessageSubscriber;
 use Store\Domain\Model\DrinkWasCreated;
 use Store\Domain\Model\DrinkWasRated;
 
-final class DrinkProjector implements MessageSubscriber
+final class DrinkProjector implements ApplicationSubscriber
 {
     /** @var RatingRepository */
     private $rating_repository;
@@ -18,22 +18,15 @@ final class DrinkProjector implements MessageSubscriber
         $this->rating_repository = $a_rating_repository;
     }
 
-    /**
-     * Provide the given message as a notification to this subscriber
-     *
-     * @param Message $message
-     *
-     * @return void
-     */
-    public function notify(Message $message)
+    public function __invoke(DomainEvent $event)
     {
-        if ($message instanceof DrinkWasRated)
+        if ($event instanceof DrinkWasRated)
         {
-            $this->rating_repository->updateRating($message->aggregateId(), $message->drinkId());
+            $this->rating_repository->updateRating($event->aggregateId(), $event->drinkId());
         }
-        if ($message instanceof DrinkWasCreated)
+        if ($event instanceof DrinkWasCreated)
         {
-            $this->rating_repository->updateDrink($message->aggregateId(), $message->name());
+            $this->rating_repository->updateDrink($event->aggregateId(), $event->name());
         }
     }
 }

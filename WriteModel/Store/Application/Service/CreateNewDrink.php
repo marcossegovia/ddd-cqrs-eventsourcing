@@ -2,7 +2,7 @@
 
 namespace Store\Application\Service;
 
-use Core\Application\ApplicationService;
+use Core\Application\Service\ApplicationService;
 use Store\Application\Command\CreateNewDrink as CreateNewDrinkCommand;
 use Store\Domain\Model\Drink;
 use Store\Domain\Repository\DrinkRepository;

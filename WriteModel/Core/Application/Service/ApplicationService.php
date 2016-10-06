@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Application;
+namespace Core\Application\Service;
 
 interface ApplicationService
 {

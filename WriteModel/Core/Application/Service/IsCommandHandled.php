@@ -2,7 +2,6 @@
 
 namespace Core\Application\Service;
 
-use Core\Application\ApplicationService;
 use SimpleBus\Message\Handler\MessageHandler;
 use SimpleBus\Message\Message;
 
