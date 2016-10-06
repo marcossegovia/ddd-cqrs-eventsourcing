@@ -3,6 +3,7 @@
 namespace User\Application\Command;
 
 use SimpleBus\Message\Type\Command;
+use User\Domain\Model\Email;
 
 final class SayGreetings implements Command
 {
@@ -27,11 +28,11 @@ final class SayGreetings implements Command
     }
 
     /**
-     * @return string
+     * @return Email
      */
-    public function email() : string
+    public function email() : Email
     {
-        return $this->email;
+        return new Email($this->email);
     }
 
 }

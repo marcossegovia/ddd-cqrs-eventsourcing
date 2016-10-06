@@ -3,7 +3,6 @@
 namespace User\Application\Service;
 
 use Core\Application\Service\ApplicationService;
-use User\Domain\Model\Email;
 use User\Domain\Model\User;
 use User\Domain\Repository\UserRepository;
 use User\Application\Command\CreateNewUser as CreateNewUserCommand;
@@ -20,7 +19,7 @@ final class CreateNewUser implements ApplicationService
 
     public function __invoke(CreateNewUserCommand $command)
     {
-        $user = User::create($this->user_repository->nextIdentity(), $command->name(), new Email($command->email()));
+        $user = User::create($this->user_repository->nextIdentity(), $command->name(), $command->email());
         $this->user_repository->add($user);
     }
 }

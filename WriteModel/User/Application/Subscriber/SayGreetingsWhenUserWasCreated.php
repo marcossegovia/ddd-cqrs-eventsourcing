@@ -19,7 +19,7 @@ final class SayGreetingsWhenUserWasCreated implements ApplicationSubscriber
 
     public function __invoke(UserWasCreated $event)
     {
-        $greetings_command = new SayGreetings($event->name(), $event->email());
+        $greetings_command = new SayGreetings($event->name(), $event->email()->value());
         $this->command_bus->handle($greetings_command);
     }
 }
