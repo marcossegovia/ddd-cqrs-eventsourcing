@@ -189,7 +189,7 @@ $container->add('user.application.service.add_rated_drink_to_user', 'Core\Applic
 
 $command_bus = $container->get('CommandBus');
 
-$create_new_user_command  = new \User\Application\Command\CreateNewUser('Marcos Segovia');
+$create_new_user_command  = new \User\Application\Command\CreateNewUser('Marcos Segovia', 'marcos.segovia@uvinum.com');
 $create_new_drink_command = new \Store\Application\Command\CreateNewDrink('Pruno');
 
 $command_bus->handle($create_new_user_command);

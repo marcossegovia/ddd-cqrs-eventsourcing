@@ -3,6 +3,7 @@
 namespace User\Application\Command;
 
 use SimpleBus\Message\Type\Command;
+use User\Domain\Model\Email;
 
 class CreateNewUser implements Command
 {
@@ -15,7 +16,7 @@ class CreateNewUser implements Command
     public function __construct($a_name, $an_email)
     {
         $this->name  = $a_name;
-        $this->email = $an_email;
+        $this->email = new Email($an_email);
     }
 
     /**
@@ -27,7 +28,7 @@ class CreateNewUser implements Command
     }
 
     /**
-     * @return string
+     * @return Email
      */
     public function email()
     {

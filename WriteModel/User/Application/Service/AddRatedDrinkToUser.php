@@ -2,11 +2,11 @@
 
 namespace User\Application\Service;
 
-use Core\Application\Service\WithRecordedEvents;
-use SimpleBus\Message\Message;
+use Core\Application\ApplicationService;
 use User\Domain\Repository\UserRepository;
+use User\Application\Command\AddRatedDrinkToUser as AddRatedDrinkToUserCommand;
 
-final class AddRatedDrinkToUser extends WithRecordedEvents
+final class AddRatedDrinkToUser implements ApplicationService
 {
     /** @var UserRepository */
     private $user_repository;
@@ -16,18 +16,10 @@ final class AddRatedDrinkToUser extends WithRecordedEvents
         $this->user_repository = $a_user_repository;
     }
 
-    /**
-     * Handles the given message.
-     *
-     * @param Message $message
-     *
-     * @return void
-     */
-    public function handle(Message $message)
+    public function __invoke(AddRatedDrinkToUserCommand $command)
     {
-        $user = $this->user_repository->getById($message->userId());
-        $user->addDrink($message->drinkId());
+        $user = $this->user_repository->getById($command->userId());
+        $user->addDrink($command->drinkId());
         $this->user_repository->add($user);
-        $this->recordEvents($user);
     }
 }

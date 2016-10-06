@@ -2,13 +2,12 @@
 
 namespace User\Application\Service;
 
-use Core\Application\Service\WithRecordedEvents;
-use SimpleBus\Message\Message;
-use User\Domain\Model\Email;
+use Core\Application\ApplicationService;
 use User\Domain\Model\User;
 use User\Domain\Repository\UserRepository;
+use User\Application\Command\CreateNewUser as CreateNewUserCommand;
 
-final class CreateNewUser extends WithRecordedEvents
+final class CreateNewUser implements ApplicationService
 {
     /** @var UserRepository */
     private $user_repository;
@@ -18,10 +17,9 @@ final class CreateNewUser extends WithRecordedEvents
         $this->user_repository = $a_user_repository;
     }
 
-    public function handle(Message $message)
+    public function __invoke(CreateNewUserCommand $command)
     {
-        $user = User::create($this->user_repository->nextIdentity(), $message->name(), new Email($message->email()));
+        $user = User::create($this->user_repository->nextIdentity(), $command->name(), $command->email());
         $this->user_repository->add($user);
-        $this->recordEvents($user);
     }
 }

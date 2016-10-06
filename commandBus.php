@@ -177,7 +177,7 @@ $container->add('user.application.subscriber.say_greetings_when_user_was_created
     'CommandBus'
 );
 
-//Use cases
+//Use cases with EventHandling
 $container->add('user.application.service.create_new_user.original', 'User\Application\Service\CreateNewUser')->withArgument('User\Domain\Repository\UserRepository');
 $container->add('user.application.service.create_new_user', 'Core\Application\Service\WithEventHandling')->withArgument(
     'user.application.service.create_new_user.original'
@@ -198,7 +198,11 @@ $container->add('user.application.service.add_rated_drink_to_user', 'Core\Applic
     'user.application.service.add_rated_drink_to_user.original'
 )->withArgument('EventBus');
 
-$container->add('user.application.service.say_greetings', 'User\Application\Service\SayGreetings');
+//Use cases
+$container->add('user.application.service.say_greetings.original', 'User\Application\Service\SayGreetings');
+$container->add('user.application.service.say_greetings', 'Core\Application\Service\IsCommandHandled')->withArgument(
+    'user.application.service.say_greetings.original'
+)->withArgument('CommandBus');
 
 /** *** */
 

@@ -2,13 +2,10 @@
 
 namespace Store\Domain\Model;
 
-use Core\Domain\Model\MessageRecorderCapabilities;
-use SimpleBus\Message\Recorder\ContainsRecordedMessages;
+use Core\Infrastructure\EventBus\DomainEventRecorder;
 
-class Drink implements ContainsRecordedMessages
+class Drink
 {
-    use MessageRecorderCapabilities;
-
     /** @var DrinkId */
     private $id;
 
@@ -29,7 +26,7 @@ class Drink implements ContainsRecordedMessages
     {
         $drink = new self($an_id, $a_name);
         $drink->setName($a_name);
-        $drink->record(new DrinkWasCreated($an_id, $a_name));
+        DomainEventRecorder::instance()->recordMessage(new DrinkWasCreated($an_id, $a_name));
 
         return $drink;
     }

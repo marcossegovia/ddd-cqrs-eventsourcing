@@ -2,45 +2,48 @@
 
 namespace Core\Application\Service;
 
+use Core\Application\ApplicationService;
+use Core\Domain\Infrastructure\EventBus;
+use Core\Infrastructure\EventBus\DomainEventRecorder;
 use SimpleBus\Message\Bus\MessageBus;
 use SimpleBus\Message\Handler\MessageHandler;
 use SimpleBus\Message\Message;
 
 final class WithEventHandling implements MessageHandler
 {
-    private $application_service_with_events;
+    /** @var ApplicationService */
+    private $application_service;
 
-    /** @var */
+    /** @var EventBus */
     private $event_bus;
 
     public function __construct(
-        WithRecordedEvents $an_application_service_with_events_recorded,
+        ApplicationService $an_application_service,
         MessageBus $an_event_bus
     )
     {
-        $this->application_service_with_events = $an_application_service_with_events_recorded;
-        $this->event_bus                       = $an_event_bus;
+        $this->application_service = $an_application_service;
+        $this->event_bus           = $an_event_bus;
     }
 
-    /**
-     * Handles the given message.
-     *
-     * @param Message $message
-     *
-     * @return void
-     */
     public function handle(Message $message)
     {
-        $this->application_service_with_events->handle($message);
+        $application_service_response = call_user_func([$this->application_service, '__invoke'], $message);
         $this->publishApplicationServiceEvents();
+
+        return $application_service_response;
     }
 
     private function publishApplicationServiceEvents()
     {
-        $recorded_events = $this->application_service_with_events->getAllRecordedEvents();
-        foreach ($recorded_events as $event)
-        {
-            $this->event_bus->handle($event);
-        }
+        $recorded_messages = DomainEventRecorder::instance()->recordedMessages();
+        DomainEventRecorder::instance()->eraseMessages();
+
+        array_map([$this, 'handleEvent'], $recorded_messages);
+    }
+
+    private function handleEvent($event)
+    {
+        $this->event_bus->handle($event);
     }
 }

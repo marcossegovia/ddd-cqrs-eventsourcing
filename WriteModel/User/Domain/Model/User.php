@@ -5,15 +5,12 @@ namespace User\Domain\Model;
 use Core\Domain\IsEventSourced;
 use Core\Domain\Model\AggregateRoot;
 use Core\Domain\Model\DomainEvent;
-use Core\Domain\Model\MessageRecorderCapabilities;
-use SimpleBus\Message\Recorder\ContainsRecordedMessages;
+use Core\Infrastructure\EventBus\DomainEventRecorder;
 use Store\Domain\Model\DrinkId;
 use Store\Domain\Model\DrinkWasRated;
 
-final class User implements ContainsRecordedMessages, IsEventSourced
+final class User implements IsEventSourced
 {
-    use MessageRecorderCapabilities;
-
     /** @var UserId */
     private $id;
 
@@ -43,7 +40,7 @@ final class User implements ContainsRecordedMessages, IsEventSourced
         $user->setName($a_name);
         $user->setEmail($an_email);
         $user->setRatedDrinks([]);
-        $user->record(new UserWasCreated($an_id, $a_name, $an_email));
+        DomainEventRecorder::instance()->recordMessage(new UserWasCreated($an_id, $a_name, $an_email));
 
         return $user;
     }
@@ -90,7 +87,7 @@ final class User implements ContainsRecordedMessages, IsEventSourced
     public function addDrink(DrinkId $a_drink_id)
     {
         $drink_was_rated = new DrinkWasRated($this->id, $a_drink_id);
-        $this->record($drink_was_rated);
+        DomainEventRecorder::instance()->recordMessage($drink_was_rated);
         $this->rated_drinks[] = $a_drink_id;
     }
 
