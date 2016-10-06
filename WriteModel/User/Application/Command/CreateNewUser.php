@@ -3,7 +3,6 @@
 namespace User\Application\Command;
 
 use SimpleBus\Message\Type\Command;
-use User\Domain\Model\Email;
 
 class CreateNewUser implements Command
 {
@@ -28,7 +27,7 @@ class CreateNewUser implements Command
     }
 
     /**
-     * @return Email
+     * @return string
      */
     public function email()
     {
