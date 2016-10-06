@@ -29,7 +29,7 @@ final class UserWasCreated implements DomainEvent
     /**
      * @return string
      */
-    public function aggregateId()
+    public function aggregateId() : string
     {
         return $this->id;
     }
@@ -37,7 +37,7 @@ final class UserWasCreated implements DomainEvent
     /**
      * @return string
      */
-    public function name()
+    public function name() : string
     {
         return $this->name;
     }
@@ -45,7 +45,7 @@ final class UserWasCreated implements DomainEvent
     /**
      * @return string
      */
-    public function email()
+    public function email() : string
     {
         return $this->email;
     }

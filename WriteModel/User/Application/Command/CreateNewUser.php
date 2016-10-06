@@ -21,7 +21,7 @@ class CreateNewUser implements Command
     /**
      * @return string
      */
-    public function name()
+    public function name() : string
     {
         return $this->name;
     }
@@ -29,7 +29,7 @@ class CreateNewUser implements Command
     /**
      * @return string
      */
-    public function email()
+    public function email() : string
     {
         return $this->email;
     }
