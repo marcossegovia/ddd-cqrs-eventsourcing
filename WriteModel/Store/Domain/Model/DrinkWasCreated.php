@@ -22,11 +22,11 @@ class DrinkWasCreated implements DomainEvent
     }
 
     /**
-     * @return string
+     * @return DrinkId
      */
-    public function aggregateId() : string
+    public function aggregateId() : DrinkId
     {
-        return $this->id;
+        return DrinkId::fromString($this->id);
 
     }
 

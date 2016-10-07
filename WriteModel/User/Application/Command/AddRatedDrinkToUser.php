@@ -3,6 +3,8 @@
 namespace User\Application\Command;
 
 use SimpleBus\Message\Type\Command;
+use Store\Domain\Model\DrinkId;
+use User\Domain\Model\UserId;
 
 final class AddRatedDrinkToUser implements Command
 {
@@ -22,18 +24,18 @@ final class AddRatedDrinkToUser implements Command
     }
 
     /**
-     * @return string
+     * @return DrinkId
      */
-    public function drinkId() : string
+    public function drinkId() : DrinkId
     {
-        return $this->drink_id;
+        return DrinkId::fromString($this->drink_id);
     }
 
     /**
-     * @return string
+     * @return UserId
      */
-    public function userId() : string
+    public function userId() : UserId
     {
-        return $this->user_id;
+        return UserId::fromString($this->user_id);
     }
 }

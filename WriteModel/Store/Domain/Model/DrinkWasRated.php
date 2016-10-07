@@ -23,18 +23,18 @@ class DrinkWasRated implements DomainEvent
     }
 
     /**
-     * @return string
+     * @return UserId
      */
-    public function aggregateId() : string
+    public function aggregateId() : UserId
     {
-        return $this->user_id;
+        return UserId::fromString($this->user_id);
     }
 
     /**
-     * @return string
+     * @return DrinkId
      */
-    public function drinkId() : string
+    public function drinkId() : DrinkId
     {
-        return $this->drink_id;
+        return DrinkId::fromString($this->drink_id);
     }
 }
