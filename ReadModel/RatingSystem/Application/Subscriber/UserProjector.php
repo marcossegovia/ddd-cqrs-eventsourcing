@@ -19,6 +19,6 @@ final class UserProjector implements ApplicationSubscriber
 
     public function __invoke(UserWasCreated $event)
     {
-        $this->rating_repository->updateUser(UserId::fromString($event->aggregateId()), $event->name());
+        $this->rating_repository->updateUser($event->aggregateId(), $event->name());
     }
 }

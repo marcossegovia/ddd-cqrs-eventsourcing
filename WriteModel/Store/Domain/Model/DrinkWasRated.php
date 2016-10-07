@@ -7,10 +7,10 @@ use User\Domain\Model\UserId;
 
 class DrinkWasRated implements DomainEvent
 {
-    /** @var string */
+    /** @var UserId */
     private $user_id;
 
-    /** @var string */
+    /** @var DrinkId */
     private $drink_id;
 
     public function __construct(
@@ -18,22 +18,22 @@ class DrinkWasRated implements DomainEvent
         DrinkId $a_drink_id
     )
     {
-        $this->user_id  = (string) $a_user_id;
-        $this->drink_id = (string) $a_drink_id;
+        $this->user_id  = $a_user_id;
+        $this->drink_id = $a_drink_id;
     }
 
     /**
-     * @return string
+     * @return UserId
      */
-    public function aggregateId() : string
+    public function aggregateId() : UserId
     {
         return $this->user_id;
     }
 
     /**
-     * @return string
+     * @return DrinkId
      */
-    public function drinkId() : string
+    public function drinkId() : DrinkId
     {
         return $this->drink_id;
     }
