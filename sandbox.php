@@ -135,16 +135,19 @@ $container->share('CommandBus',
 $container->share('ReadModel\RatingSystem\Domain\Repository\RatingRepository',
     'ReadModel\RatingSystem\Infrastructure\Repository\InMemory\Rating\RatingRepository'
 );
-$container
-    ->share('read_model.rating_system.application.subscriber.drink_projector',
-        'ReadModel\RatingSystem\Application\Subscriber\DrinkProjector'
-    )
-    ->withArgument('ReadModel\RatingSystem\Domain\Repository\RatingRepository');
-$container
-    ->share('read_model.rating_system.application.subscriber.user_projector',
-        'ReadModel\RatingSystem\Application\Subscriber\UserProjector'
-    )
-    ->withArgument('ReadModel\RatingSystem\Domain\Repository\RatingRepository');
+$container->share('read_model.rating_system.application.subscriber.drink_projector.original', 'ReadModel\RatingSystem\Application\Subscriber\DrinkProjector')->withArgument(
+    'ReadModel\RatingSystem\Domain\Repository\RatingRepository'
+);
+$container->share('read_model.rating_system.application.subscriber.drink_projector', 'Core\Application\Subscriber\IsSubscribedToEvents')->withArgument(
+    'read_model.rating_system.application.subscriber.drink_projector.original'
+);
+
+$container->share('read_model.rating_system.application.subscriber.user_projector.original', 'ReadModel\RatingSystem\Application\Subscriber\UserProjector')->withArgument(
+    'ReadModel\RatingSystem\Domain\Repository\RatingRepository'
+);
+$container->share('read_model.rating_system.application.subscriber.user_projector', 'Core\Application\Subscriber\IsSubscribedToEvents')->withArgument(
+    'read_model.rating_system.application.subscriber.user_projector.original'
+);
 
 $container->add('read_model.rating_system.application.service.get_user_drinks_rated',
     'ReadModel\RatingSystem\Application\Service\GetUserDrinksRated'

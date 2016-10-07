@@ -4,6 +4,7 @@ namespace ReadModel\RatingSystem\Application\Subscriber;
 
 use Core\Application\Subscriber\ApplicationSubscriber;
 use ReadModel\RatingSystem\Domain\Repository\RatingRepository;
+use User\Domain\Model\UserId;
 use User\Domain\Model\UserWasCreated;
 
 final class UserProjector implements ApplicationSubscriber
@@ -18,9 +19,6 @@ final class UserProjector implements ApplicationSubscriber
 
     public function __invoke(UserWasCreated $event)
     {
-        if ($message instanceof UserWasCreated)
-        {
-            $this->rating_repository->updateUser($message->aggregateId(), $message->name());
-        }
+        $this->rating_repository->updateUser(UserId::fromString($event->aggregateId()), $event->name());
     }
 }

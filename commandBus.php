@@ -11,8 +11,6 @@ use SimpleBus\Message\Name\ClassBasedNameResolver;
 use SimpleBus\Message\Subscriber\Collection\LazyLoadingMessageSubscriberCollection;
 use SimpleBus\Message\Subscriber\NotifiesMessageSubscribersMiddleware;
 use SimpleBus\Message\Subscriber\Resolver\NameBasedMessageSubscriberResolver;
-use User\Domain\Model\User;
-use User\Domain\Model\UserId;
 
 require __DIR__ . '/vendor/autoload.php';
 

@@ -6,7 +6,7 @@ use Core\Domain\Model\DomainEvent;
 
 class DrinkWasCreated implements DomainEvent
 {
-    /** @var DrinkId */
+    /** @var string */
     private $id;
 
     /** @var string */
@@ -17,14 +17,14 @@ class DrinkWasCreated implements DomainEvent
         string $a_name
     )
     {
-        $this->id   = $a_id;
+        $this->id   = (string) $a_id;
         $this->name = $a_name;
     }
 
     /**
-     * @return DrinkId
+     * @return string
      */
-    public function aggregateId()
+    public function aggregateId() : string
     {
         return $this->id;
 
@@ -33,7 +33,7 @@ class DrinkWasCreated implements DomainEvent
     /**
      * @return string
      */
-    public function name()
+    public function name() : string
     {
         return $this->name;
     }

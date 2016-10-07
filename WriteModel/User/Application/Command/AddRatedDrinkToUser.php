@@ -3,15 +3,13 @@
 namespace User\Application\Command;
 
 use SimpleBus\Message\Type\Command;
-use Store\Domain\Model\DrinkId;
-use User\Domain\Model\UserId;
 
 final class AddRatedDrinkToUser implements Command
 {
-    /** @var DrinkId */
+    /** @var string */
     private $drink_id;
 
-    /** @var UserId */
+    /** @var string */
     private $user_id;
 
     public function __construct(
@@ -19,22 +17,22 @@ final class AddRatedDrinkToUser implements Command
         string $a_user_id
     )
     {
-        $this->drink_id = DrinkId::fromString($a_drink_id);
-        $this->user_id  = UserId::fromString($a_user_id);
+        $this->drink_id = $a_drink_id;
+        $this->user_id  = $a_user_id;
     }
 
     /**
-     * @return DrinkId
+     * @return string
      */
-    public function drinkId() : DrinkId
+    public function drinkId() : string
     {
         return $this->drink_id;
     }
 
     /**
-     * @return UserId
+     * @return string
      */
-    public function userId() : UserId
+    public function userId() : string
     {
         return $this->user_id;
     }
